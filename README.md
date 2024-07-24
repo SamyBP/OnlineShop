@@ -1,38 +1,25 @@
-### Product Description: Online Shop Database Design
+## Online Shop Database Design
 
-Create and implement a database for an online shop application that is well-structured, efficient, and capable of handling various functionalities required for an online store.
+### Description
+- The database is designed to handle various functionalities required for an online store.
+- The application supports the following user roles with additional ones that can be added in the future:
+  - Administrator
+  - Regular User
+- The application allows the definition of a set of products, each product belongs to a single product category
+- The application allows users
+  - To add a product to a cart, each user can have only one active cart at a time
+  - To have at most five addresses
+  - To place an order where the user can choose one of his stored address as the delivery address and/or invoice address
 
-The application should support the following user roles:
-* Administrator
-* Regular User
-
-Note that a single user can have both Administrator and Regular User roles, and additional roles may be added in the future.
-
-#### Key Features:
-
-1. **Product Management:**
-    * The application should allow the definition of a set of products.
-    * Each product must belong to a single product category.
-    * A category is identified by its name, and no two categories can have the same name.
-    * The application should track the stock for each product.
-    * An order cannot be completed if the items in the cart are not available in stock.
-    * The application should log any new stock received for each product.
-    * For each product, and administrator can set the product name, a description (size limit of 200 characters).
-
-2. **Cart and Order Management:**
-    * Users can add products to a cart along with their quantities and which the current product price.
-    * Each user can have only one active cart at a time.
-    * Users can store up to five addresses.
-    * When placing an order, users can choose one of their stored addresses as the delivery address and/or invoice address.
-    * An order is identified by the user, delivery address, invoice address, and the set of products.
-
-#### Constraints:
-* Each entity should have the following fields:
-    * **created_at**: Represents the timestamp without timezone when the entity was created.
-    * **updated_at**: Represents the last timestamp when the entity was updated.
-
-#### Additional Considerations:
-* Ensure that the database design can accommodate potential future requirements and scalability.
-* Consider implementing audit trails for critical actions performed by users, especially administrators.
-* Include appropriate indexing and optimization techniques to ensure efficient query performance.
-* User deletion is forbidden. A user can be deleted by a soft delete. 
+### Setup
+1. Create a database **online_shop**
+2. Navigate to the [scripts](scripts) directory and run the following command to restore the database schema
+   ````
+      pg_restore -U postgres -d online_shop schema.sql
+   ````
+3. After restoration run the **setup.sql** script to populate the database. The script creates n number of users and assigns the role of Administrator to [n/3] random users, the role of Regular user to [n/3] random users, and for the rest both roles.
+   The script also creates m categories, creating a random number (between 1 and p) of products for each category, for each product is assigned a random price (between 1 and x) and a random quantity (between 1 and q)   
+   e.g:
+   ````
+      psql -U postgres -d online_shop -f setup.sql -v n= -v m= -v p= -v q= -v x=
+   ````

@@ -86,7 +86,7 @@ erDiagram
         int cart_id
         int product_id
         int quantity
-        int price
+        double price
         timestamp created_at
         timestamp updated_at
     }
@@ -153,7 +153,8 @@ erDiagram
   - Multi role access: a postgres role can delete, the other can not
 - To ensure older price in the order history, the column price in cart_product represents the price of the product at the time of the order
 
-## Potential indexes
+## Indexes
 - Foreign keys
 - Order -> created_at
 - Product -> name
+- Cart -> unique (user_id, is_active) where is_active = 1
