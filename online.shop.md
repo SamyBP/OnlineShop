@@ -68,19 +68,12 @@ erDiagram
         String name
         String description
         double price
+        int quantity
         int category_id
         timestamp created_at
         timestamp updated_at
     }
     
-    stock {
-        int stock_id
-        int product_id
-        int quantity
-        timestamp created_at
-        timestamp updated_at
-    }
-
     cart {
         int cart_id
         int user_id
@@ -93,6 +86,7 @@ erDiagram
         int cart_id
         int product_id
         int quantity
+        int price
         timestamp created_at
         timestamp updated_at
     }
@@ -129,7 +123,6 @@ erDiagram
     product ||--|| category: ""
     product ||--o{ cart_product: ""
     product ||--o{ stock_log: ""
-    product ||--o{ stock: ""
     
     cart ||--|{ cart_product: ""
     cart ||--|| order: ""
@@ -152,17 +145,15 @@ erDiagram
 - Users: username = unique
 - Category: name = not null and unique
 - Cart: is_active default is true
-- To ensure one active cart at all time:
-  - Option1: a unique partial index on user_id where is_active = true
-  - Option2: an exclude constraint on user_id where is_active = true 
-  - Option3: a trigger
+- To ensure one active cart at all time: a unique partial index on user_id, is_active where is_active is true
 - Trigger before insert on user_address => if 5 addresses for user then rollback 
 - Trigger before update for each entity => set updated_at to current_timestamp
-- Trigger before delete for users:
-  - Option1: just raise an exception => all "deletes" must be done using update users set is_active = 0
-  - Option2: update in the trigger and return null
-- Product: fk(category_id) on update cascade on delete set null (maybe)
+- User deletion prevention
+  - A procedure fo delete_user where is_active will be set to 0
+  - Multi role access: a postgres role can delete, the other can not
+- To ensure older price in the order history, the column price in cart_product represents the price of the product at the time of the order
 
 ## Potential indexes
+- Foreign keys
 - Order -> created_at
-- Product -> name (maybe)
+- Product -> name
