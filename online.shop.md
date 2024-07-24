@@ -1,7 +1,7 @@
 ```mermaid
 erDiagram
     user {
-        int user_id
+        int id
         String username
         String password
         String first_name
@@ -13,7 +13,7 @@ erDiagram
     }
 
     role {
-        int role_id
+        int id
         String role_name
         timestamp created_at
         timestamp updated_at
@@ -34,7 +34,7 @@ erDiagram
     }
 
     address {
-        int address_id
+        int id
         String address
         int city_id
         timestamp created_at
@@ -42,7 +42,7 @@ erDiagram
     }
 
     city {
-        int city_id
+        int id
         String city
         int country_id
         timestamp created_at
@@ -50,21 +50,21 @@ erDiagram
     }
 
     country {
-        int country_id
+        int id
         String country
         timestamp created_at
         timestamp updated_at
     }
 
     category{
-        int category_id
+        int id
         String name
         timestamp created_at
         timestamp updated_at
     }
 
     product {
-        int product_id
+        int id
         String name
         String description
         double price
@@ -75,7 +75,7 @@ erDiagram
     }
     
     cart {
-        int cart_id
+        int id
         int user_id
         boolean is_active
         timestamp created_at
@@ -92,7 +92,7 @@ erDiagram
     }
 
     order {
-        serial order_id
+        int id
         int user_id
         int cart_id
         int delivery_address
@@ -104,7 +104,7 @@ erDiagram
     }
     
     stock_log {
-        int stock_log_id
+        int id
         int product_id
         int quantity
         timestamp created_at
