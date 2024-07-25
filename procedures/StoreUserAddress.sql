@@ -1,7 +1,3 @@
--- PROCEDURE: os.store_user_address(integer, text, text, text)
-
--- DROP PROCEDURE IF EXISTS os.store_user_address(integer, text, text, text);
-
 CREATE OR REPLACE PROCEDURE os.store_user_address(
 	IN integer,
 	IN text,
@@ -38,5 +34,3 @@ insert into os.user_address(user_id, address_id) values ($1, _address_id);
 commit;
 end;
 $BODY$;
-ALTER PROCEDURE os.store_user_address(integer, text, text, text)
-    OWNER TO postgres;

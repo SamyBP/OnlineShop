@@ -1,7 +1,3 @@
--- PROCEDURE: os.add_to_cart(integer, integer, integer)
-
--- DROP PROCEDURE IF EXISTS os.add_to_cart(integer, integer, integer);
-
 CREATE OR REPLACE PROCEDURE os.add_to_cart(
 	IN integer,
 	IN integer,
@@ -30,5 +26,3 @@ insert into cart_product(cart_id, product_id, quantity, price) select * from car
 
 end;
 $BODY$;
-ALTER PROCEDURE os.add_to_cart(integer, integer, integer)
-    OWNER TO postgres;

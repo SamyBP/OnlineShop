@@ -1,7 +1,3 @@
--- PROCEDURE: os.place_order(integer, integer, integer)
-
--- DROP PROCEDURE IF EXISTS os.place_order(integer, integer, integer);
-
 CREATE OR REPLACE PROCEDURE os.place_order(
 	IN integer,
 	IN integer,
@@ -35,5 +31,3 @@ set is_active = false
 where user_id = $1;
 end;
 $BODY$;
-ALTER PROCEDURE os.place_order(integer, integer, integer)
-    OWNER TO postgres;
