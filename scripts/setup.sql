@@ -12,12 +12,12 @@ insert into role(name) values ('Administrator'), ('Regular user');
 
 insert into users(username, password, first_name, last_name, last_login)
 select
-	'username_' || random()::text as username,
+	'username_' || idx as username,
 	'ee11cbb19052e40b07aac0ca060c23ee' as password,
 	'FirstName_' || floor(random() * power(10, floor(log(:n) + 1)))::text as first_name, 
 	'LastName_' || floor(random() * power(10, floor(log(:n) + 1)))::text as last_name,
 	 now() - '1 day'::INTERVAL * round(random() * 3*365) as last_login
-from generate_series(1, :n);
+from generate_series(1, :n) as idx;
 	
 -- Administrator for n / 3 users
 insert into user_role(user_id, role_id)
