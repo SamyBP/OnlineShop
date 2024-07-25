@@ -13,9 +13,9 @@
 
 ### Setup
 1. Create a database **online_shop**
-2. Navigate to the [scripts](scripts) directory and run the following command to restore the database schema
+2. Navigate to the [scripts](scripts) directory and run the following command to restore the database schema, or open the script in pgAdmin and execute it there.
    ````
-      pg_restore -U postgres -d online_shop schema.sql
+      psql -U postgres -d online_shop -f .\schema.sql
    ````
 3. After restoration run the **setup.sql** script to populate the database. The script creates n number of users and assigns the role of Administrator to [n/3] random users, the role of Regular user to [n/3] random users, and for the rest both roles.
    The script also creates m categories, creating a random number (between 1 and p) of products for each category, for each product is assigned a random price (between 1 and x) and a random quantity (between 1 and q)   
@@ -23,3 +23,31 @@
    ````
       psql -U postgres -d online_shop -f setup.sql -v n= -v m= -v p= -v q= -v x=
    ````
+### Usage
+- To add a product to a users cart call the procedure [AddToCart](procedures/AddToCart.sql). 
+    - The first parameter represents the user_id as integer
+    - The second parameter represents the product_id as integer
+    - The third parameter represents the quantity the user wants for that product
+    - The product will be added to the users active cart, if no active cart then the procedure will create a new one for the user
+  ````sql
+        call os.add_to_cart(user_id::int, product_id::int, desired_quantity::int);
+  ````
+- To store an address for a specific user call the procedure [StoreUserAddress](procedures/StoreUserAddress.sql)  
+  - The first parameter represents the user_id as integer
+  - The second represents the Country's name as text
+  - The third represents the City's name as text
+  - The last one represents the Address name as text
+  - If a user already has 5 addresses stored then an exception will be raised and the address will not be stored
+  ````sql
+        call os.store_user_address(user_id::int, country_name::text, city_name::text, address_name::text);
+  ````
+- To place an order for a specific user call the procedure [PlaceOrder](procedures/PlaceOrder.sql)
+  - The first parameter represents the user_id as integer
+  - The second parameter represents the delivery_address_id as integer
+  - The last parameter represents the invoice_address_id as integer
+  - If the user doesn't have an active cart an exception will be raised and the order will not be placed
+  - If the current stock of a product from the cart does not meet the required quantity the order will not be placed
+  - If successful then the cart will become inactive and the total order price is calculated
+  ````sql
+        call os.place_order(user_id::int, delivery_address_id::int, invoice_address_id::int);
+  ````
