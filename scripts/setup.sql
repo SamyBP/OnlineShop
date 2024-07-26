@@ -3,6 +3,7 @@
 -- p represents the maximum number of products to be created for each category
 -- q represents the maximum quantity a product can have
 -- x represents the maximum price a product can have 
+-- o represents the number of orders to be placed
 
 begin;
 
@@ -12,11 +13,11 @@ insert into role(name) values ('Administrator'), ('Regular user');
 
 insert into users(username, password, first_name, last_name, last_login)
 select
-	'username_' || idx as username,
+	get_random_name() || idx as username,
 	'ee11cbb19052e40b07aac0ca060c23ee' as password,
-	'FirstName_' || floor(random() * power(10, floor(log(:n) + 1)))::text as first_name, 
-	'LastName_' || floor(random() * power(10, floor(log(:n) + 1)))::text as last_name,
-	 now() - '1 day'::INTERVAL * round(random() * 3*365) as last_login
+	get_random_name() as first_name, 
+	get_random_name() as last_name,
+	now() - '1 day'::INTERVAL * round(random() * 3*365) as last_login
 from generate_series(1, :n) as idx;
 	
 -- Administrator for n / 3 users
@@ -51,6 +52,8 @@ select id, 1 from remaining_ids
 union all
 select id, 2 from remaining_ids;
 
+select setup_store_addresses(:n);
+
 -- Category
 insert into category(name)
 select 'Category_' || idx 
@@ -59,8 +62,8 @@ from generate_series(1, :m) as idx;
 -- Product
 with random_products as (
 	select
-		'Product_' || random()::text || '_' || generate_series(1, (random() * (:p - 1) + 1)::int) as name,
-		'Description_' || random()::text as description, 
+		'Product_' || get_random_name() || '_' || generate_series(1, (random() * (:p - 1) + 1)::int) as name,
+		'Description_' || get_random_name() as description, 
 		round((random() * (:x - 1) + 1)::numeric, 2) as price,
 		(random() * (:q - 1) + 1)::int as quantity,
 		id as category_id
@@ -68,5 +71,7 @@ with random_products as (
 )
 insert into product(name, description, price, quantity, category_id)
 select * from random_products;
+
+select setup_place_random_orders(:o, :n);
 
 commit;
