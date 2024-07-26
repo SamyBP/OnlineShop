@@ -29,24 +29,21 @@ limit :n / 3;
 
 -- Regular user for n / 3 users
 insert into user_role(user_id, role_id)
-select id, 2
-from users
-where id not in (
-	select user_id from user_role
-)
+select u.id, 2
+from users u
+left join user_role ur on u.id = ur.user_id
+where ur.role_id is null
 order by random()
 limit :n / 3;
 
 -- Both roles for the remaining users
 insert into user_role(user_id, role_id)
 with remaining_ids as (
-	select id
-	from users
-	where id not in (
-		select user_id from user_role
-	)
-	order by random()
-	limit :n - 2 * :n / 3	
+	select u.id
+	from users u
+	left join user_role ur on u.id = ur.user_id
+	where ur.role_id is null
+	order by random()	
 )
 select id, 1 from remaining_ids
 union all
