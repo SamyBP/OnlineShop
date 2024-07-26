@@ -17,11 +17,13 @@
    ````
       psql -U postgres -d online_shop -f .\schema.sql
    ````
-3. After restoration run the **setup.sql** script to populate the database. The script creates n number of users and assigns the role of Administrator to [n/3] random users, the role of Regular user to [n/3] random users, and for the rest both roles.
-   The script also creates m categories, creating a random number (between 1 and p) of products for each category, for each product is assigned a random price (between 1 and x) and a random quantity (between 1 and q)   
-   e.g:
+3. After restoration run the **setup.sql** script to populate the database. The script creates **n** number of users and assigns the role of Administrator to **[n/3]** random users, the role of Regular user to **[n/3]** random users, and for the rest both roles.
+   The script also creates **m** categories, creating a random number (between 1 and **p**) of products for each category, for each product a random price is assigned (between 1 and **x**) and a random quantity (between 1 and **q**).
+   For each user an address is stored, and the script places **o** orders for random users, each user ordering a random number of products
+   
+  **Note**: The script uses the functions from the [functions](functions) directory for randomization
    ````
-      psql -U postgres -d online_shop -f setup.sql -v n= -v m= -v p= -v q= -v x=
+      psql -U postgres -d online_shop -f setup.sql -v n= -v m= -v p= -v q= -v x= -v o=
    ````
 ### Usage
 - To add a product to a users cart call the procedure [AddToCart](procedures/AddToCart.sql). 
@@ -50,4 +52,9 @@
   - If successful then the cart will become inactive and the total order price is calculated
   ````sql
         call os.place_order(user_id::int, delivery_address_id::int, invoice_address_id::int);
+  ````
+- To mark users with an inactivity greater than 2 years call the procedure [MarkUsersDeleted](procedures/MarkUsersDeleted.sql)
+  - The procedure will set is_active to false for each user that last logged since 2 years ago
+  ````sql
+        call os.mark_users_deleted();
   ````
