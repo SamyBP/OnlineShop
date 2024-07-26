@@ -2,8 +2,7 @@ CREATE OR REPLACE PROCEDURE os.store_user_address(
 	IN integer,
 	IN text,
 	IN text,
-	IN text
-)
+	IN text)
 LANGUAGE 'plpgsql'
 AS $BODY$
 
@@ -32,6 +31,5 @@ begin
     insert into os.address(address, city_id) values ($4, _city_id) returning id into _address_id;
     insert into os.user_address(user_id, address_id) values ($1, _address_id);
 
-    commit;
 end;
 $BODY$;
