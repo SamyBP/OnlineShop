@@ -1,5 +1,5 @@
 CREATE OR REPLACE FUNCTION os.setup_store_addresses(
-	integer)
+	p_users_count integer)
     RETURNS boolean
     LANGUAGE 'plpgsql'
 AS $BODY$
@@ -9,7 +9,7 @@ declare
 	_address text;
 begin
 
-    for i in 1..$1
+    for i in 1..p_users_count
     loop
         select (array['Romania', 'Spain'])[floor(random() * 2 + 1)] into _country;
         if _country = 'Romania' then

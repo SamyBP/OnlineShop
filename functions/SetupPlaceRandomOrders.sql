@@ -1,7 +1,7 @@
 
 CREATE OR REPLACE FUNCTION os.setup_place_random_orders(
-	integer,
-	integer)
+	p_orders_count integer,
+	p_users_count integer)
     RETURNS boolean
     LANGUAGE 'plpgsql'
 AS $BODY$
@@ -13,10 +13,10 @@ declare
 	_products_count int;
 begin
     select count(id) from product into _products_count;
-    for i in 1..$1
+    for i in 1..p_orders_count
     loop
         select random() * 5 + 1 into _product_cart_count;
-        select random() * $2 + 1 into _user_id;
+        select random() * (p_users_count - 1) + 1 into _user_id;
         select address_id from user_address where user_id = _user_id limit 1 into _address_id;
 
         for j in 1.._product_cart_count

@@ -10,6 +10,12 @@
   - To add a product to a cart, each user can have only one active cart at a time
   - To have at most five addresses
   - To place an order where the user can choose one of his stored address as the delivery address and/or invoice address
+- The database lets **os_admin** and **os_rguser** to connect to it, with the following privileges [Privileges.sql](Privileges.sql)
+
+  | Users     	| Create     	| Read       	| Update                                        	| Delete                  	| Execute                                                                             	|
+  |-----------	|------------	|------------	|-----------------------------------------------	|-------------------------	|-------------------------------------------------------------------------------------	|
+  | os_admin  	| All tables 	| All tables 	| All tables                                    	| All tables except users 	| All functions and procedures                                                        	|
+  | os_rguser 	| All tables 	| All tables 	| All tables except is_active column from users 	| All tables except users 	| All functions and procedures except [MarkUsersDeleted](procedures/MarkUsersDeleted) 	|
 
 ### Setup
 1. Create a database **online_shop**
@@ -53,7 +59,7 @@
   ````sql
         call os.place_order(user_id::int, delivery_address_id::int, invoice_address_id::int);
   ````
-- To mark users with an inactivity greater than 2 years call the procedure [MarkUsersDeleted](procedures/MarkUsersDeleted.sql)
+- To mark users with an inactivity greater than 2 years call the procedure [MarkUsersDeleted](procedures/MarkUsersDeleted.sql) while logged in as **os_admin**
   - The procedure will set is_active to false for each user that last logged since 2 years ago
   ````sql
         call os.mark_users_deleted();

@@ -1,6 +1,4 @@
 -- List all products sold in the last week
-analyze;
-
 select	p.id, p.name, o.id as order
 from os.product p
 join os.cart_product cp on p.id = cp.product_id
@@ -9,6 +7,22 @@ join os.orders o on c.id = o.cart_id
 where o.created_at >= now() - '7 days'::interval;
 
 -- Create a report which lists the most sold product in every day in last 7 days.
+with quantity_per_product as (
+	select to_char(o.created_at, 'Day') as day, p.id as product_id, sum(cp.quantity) as quantity
+	from os.product p
+	join os.cart_product cp on p.id = cp.product_id
+	join os.cart c on cp.cart_id = c.id
+	join os.orders o on c.id = o.cart_id and o.created_at >= now() - '7 days'::interval
+	group by day, p.id
+),
+max_per_day as (
+	select day, max(quantity) as quantity
+	from quantity_per_product
+	group by day
+)
+select qp.day, qp.product_id, qp.quantity 
+from quantity_per_product qp
+join max_per_day mpd on qp.day = mpd.day and qp.quantity = mpd.quantity
 
 -- List all products for a given category.
 select p.id, p.name
@@ -51,6 +65,10 @@ join os.product p on c.id = p.category_id
 where p.name like 'Product_a%' or c.name like 'Category_%';
 
 -- Write an SQL query to generate a report showing total sales for each month in the current year.
+select to_char(created_at, 'Month') as Month, sum(price) as total_sales
+from os.orders
+where date_part('year', created_at) = date_part('year', now())
+group by Month
 
 -- Write an SQL query to calculate the average value of all orders placed.
 select round(avg(price), 2) as average_value from os.orders;
@@ -68,8 +86,6 @@ join os.cart c on o.cart_id = c.id
 join os.cart_product ctp on c.id = ctp.cart_id
 join os.product p on ctp.product_id = p.id
 where o.user_id = 1;
-
-select status from os.orders;
 
 -- Write an SQL query to count the number of orders in each status (e.g., Pending, Shipped, Delivered).
 select 
@@ -102,15 +118,10 @@ group by user_id;
 
 
 -- Write an SQL query to find users who have not placed any orders in the last month.
-explain analyze
-select distinct user_id
-from os.orders
-where user_id not in (
-	select user_id
-	from os.orders
-	where created_at >= now() - '1 month'::interval
-	group by user_id
-)
+select u.id
+from os.users u
+left join os.orders o on u.id = o.user_id and o.created_at >= now() - '1 month'::interval
+where o.user_id is null;
 
 -- Write an SQL query to calculate the inventory turnover rate for each product.
 -- Inventory turnover rate can be calculated as the ratio of the total quantity sold to the average inventory
