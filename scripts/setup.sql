@@ -65,9 +65,14 @@ with random_products as (
 		(random() * (:q - 1) + 1)::int as quantity,
 		id as category_id
 	from category	
+),
+products as (
+	insert into product(name, description, price, quantity, category_id)
+	select * from random_products
+	returning id, quantity
 )
-insert into product(name, description, price, quantity, category_id)
-select * from random_products;
+insert into stock_log(product_id, quantity) select id, quantity from products;
+
 
 select setup_place_random_orders(:o, :n);
 

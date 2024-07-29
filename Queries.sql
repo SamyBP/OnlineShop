@@ -126,7 +126,22 @@ where o.user_id is null;
 -- Write an SQL query to calculate the inventory turnover rate for each product.
 -- Inventory turnover rate can be calculated as the ratio of the total quantity sold to the average inventory
 -- over a period.
-
+with cost_of_goods as (
+	select cp.product_id, sum(cp.quantity) as cost
+	from os.cart_product cp
+	join os.cart c on cp.cart_id = c.id
+	join os.orders o on c.id = o.cart_id and o.created_at between '2024-01-01 00:00:00'::timestamp and now()
+	group by cp.product_id
+),
+average_inventory as (
+	select product_id, avg(quantity)::int as average
+	from os.stock_log
+	where created_at between '2024-01-01 00:00:00'::timestamp and now()
+	group by product_id
+)
+select cogs.product_id, cogs.cost / avgi.average
+from cost_of_goods cogs
+join average_inventory avgi on cogs.product_id = avgi.product_id;
 
 -- Write an SQL query to list all addresses for each user, including the count of orders shipped to each address.
 select o.user_id, co.country || ' ' || ci.city || ' ' || a.address as delivery_address, count(o.id)

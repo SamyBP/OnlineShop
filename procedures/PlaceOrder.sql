@@ -17,9 +17,13 @@ begin
 
     for _p in select product_id, quantity, price from os.cart_product where cart_id = _cart_id
     loop
-        update os.product
-        set quantity = quantity - _p.quantity
-        where id = _p.product_id;
+        with updated_product as (
+            update os.product
+            set quantity = quantity - _p.quantity, updated_at = now()
+            where id = _p.product_id
+            returning id, quantity
+        )
+        insert into os.stock_log(product_id, quantity) select id, quantity from updated_product;
 
         select _p.price * _p.quantity + _order_price into _order_price;
     end loop;
