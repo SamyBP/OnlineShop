@@ -130,3 +130,19 @@ erDiagram
     order ||--|{ address: ""
     user ||--o{ order: ""
 ```
+
+# Constraints
+
+* A user can have only one active cart at a time.**Solution**: A unique partial index on cart(user_id, is_active) where is_active = true
+* An order status can be Pending, Shipped or Delivered. **Solution**: A check constraint on orders(status)
+* A product quantity must be greater or equal to 0. **Solution**: A check constraint on product(quantity)
+* A user can store at most 5 addresses. **Solution**: StoreUserAddress procedure raises an exception if the user already has 5 addresses stored
+* An order can't be placed with a negative quantity for a product. **Solution**: A check constraint on cart_product(quantity)
+
+# Indexes
+
+* Primary keys by default
+* On all foreign keys
+* Unique index on category.name
+* Unique index on product.name
+* Unique index on users.username

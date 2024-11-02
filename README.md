@@ -10,7 +10,7 @@
   - To add a product to a cart, each user can have only one active cart at a time
   - To have at most five addresses
   - To place an order where the user can choose one of his stored address as the delivery address and/or invoice address
-- The database lets **os_admin** and **os_rguser** to connect to it, with the following privileges [Privileges.sql](Privileges.sql)
+- The database lets **os_admin** and **os_rguser** to connect to it, with the following privileges [Privileges.sql](scripts/Privileges.sql)
 
   | Users     	| Create     	| Read       	| Update                                        	| Delete                  	| Execute                                                                             	|
   |-----------	|------------	|------------	|-----------------------------------------------	|-------------------------	|-------------------------------------------------------------------------------------	|
